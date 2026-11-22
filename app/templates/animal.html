@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ animal.nome }} — GuaipeCare{% endblock %}
+
+{% block conteudo %}
+<article class="cartao">
+    {% if animal.lista_fotos %}
+    <div class="foto-container {% if animal.lista_fotos|length > 1 %}galeria-fotos{% endif %}">
+        {% for foto in animal.lista_fotos %}
+        <div class="foto-item">
+            <img src="{{ foto }}" alt="Foto de {{ animal.nome }}" class="foto-animal">
+        </div>
+        {% endfor %}
+    </div>
+    {% if animal.lista_fotos|length > 1 %}
+    <p class="indicador-fotos">🐾 Deslize para o lado para ver mais fotos ({{ animal.lista_fotos|length }}) 🐾</p>
+    {% endif %}
+    {% endif %}
+
+    <header class="cabecalho-animal">
+        <div class="titulo-linha">
+            <h1>{{ animal.nome }}</h1>
+            <span class="badge-especie">
+                {% if animal.especie|lower in ["cão", "cao", "cadela", "cachorro", "cachorra"] %}🐕{% elif animal.especie|lower in ["gato", "gata"] %}🐈{% else %}🐾{% endif %}
+                {{ animal.especie }}
+            </span>
+        </div>
+        <div class="tag-nfc-selo">
+            <span>🏷️ Tag NFC:</span> <code>{{ animal.tag }}</code>
+        </div>
+    </header>
+
+    {% if animal.descricao %}
+    <section class="secao">
+        <h2>🐾 Sobre</h2>
+        <p class="descricao">{{ animal.descricao }}</p>
+    </section>
+    {% endif %}
+
+    {% if animal.vacinas %}
+    <section class="secao">
+        <h2>💉 Vacinas &amp; Cuidados</h2>
+        <p class="texto-vacinas">{{ animal.vacinas }}</p>
+    </section>
+    {% endif %}
+
+    <section class="secao">
+        <h2>📍 Último avistamento</h2>
+        <div class="caixa-destaque-avistamento">
+            <span class="icone-relogio">🕒</span>
+            <div>
+                <p class="horario-avistamento">{{ ultimo_avistamento }}</p>
+                {% if ultimo_avistamento != "Nenhum registro ainda." %}
+                <small style="font-size: 0.76rem; color: #826c5c; display: block; margin-top: 0.2rem; font-style: italic;">Registrado conforme o Horário Oficial de Brasília</small>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    {% if animal.contato %}
+    <section class="secao">
+        <h2>📞 Contato dos cuidadores</h2>
+        <p class="contato">{{ animal.contato }}</p>
+    </section>
+    {% endif %}
+
+    <footer class="secao aviso-privacidade">
+        <p>🔒 <strong>Aviso de Privacidade:</strong> Ao abrir esta página pedimos sua localização para registrar onde o animal foi visto. Guardamos só coordenadas e horário, sem identificar você.</p>
+    </footer>
+
+    <p id="status-localizacao" role="status"></p>
+</article>
+{% endblock %}
+
+{% block scripts %}
+<script
+    src="{{ url_for('static', filename='js/geolocalizacao.js', v='realtime1') }}"
+    data-url="{{ url_for('public.registrar_avistamento', tag=animal.tag) }}"
+></script>
+{% endblock %}

@@ -1,107 +1,200 @@
-# GuaipeCare
+# GuaipeCare 🐾
 
-Coleira inteligente de baixo custo para cães e gatos comunitários. Uma tag NFC na coleira abre uma página web com o perfil do animal (saúde, vacinas, contato dos cuidadores) e registra o último local de avistamento, mediante autorização de quem escaneia.
+> **Coleira inteligente de baixo custo com tag NFC para cães e gatos comunitários.**  
+> Ao aproximar o celular da coleira, uma página web é aberta com o perfil completo do animal (saúde, vacinas, cuidadores) e, mediante autorização voluntária de quem escaneou, registra o último local de avistamento.
 
-Projeto da disciplina de **Metodologia Científica para Computação** (UFPEL).
-Professoras: Ana Marilza Pernas e Tatiana Aires.
+Projeto desenvolvido no âmbito da disciplina de **Metodologia Científica para Computação** — Universidade Federal de Pelotas (**UFPEL**).  
+**Professoras:** Ana Marilza Pernas e Tatiana Aires.
 
-## Problema
+---
 
-Comunidades, condomínios e ONGs cuidam de animais de rua, mas as informações sobre cada animal ficam dispersas, o que dificulta acompanhar saúde, vacinas e localização.
+## 📌 O Problema
 
-## Como funciona
+Comunidades urbanas, condomínios e ONGs frequentemente cuidam de animais de rua de forma coletiva. Entretanto, o histórico de saúde, as vacinas aplicadas e a localização desses animais costumam ficar dispersos ou perder-se com o tempo. 
 
-1. O cuidador cadastra o animal no site e recebe uma URL única (`/a/<id>`).
-2. Essa URL é gravada em uma tag NFC presa à coleira.
-3. Ao aproximar o celular da coleira, a página do animal abre no navegador.
-4. Se a pessoa permitir, o navegador envia a localização e o sistema salva o **último avistamento** (coordenadas e horário).
+Coleiras convencionais com GPS ativo têm custo elevado, exigem recarga constante de bateria e planos de dados móveis caros. O **GuaipeCare** propõe uma alternativa passiva, sustentável e acessível: uma **tag NFC** na coleira que utiliza o próprio celular das pessoas que encontram o animal para atualizar o histórico.
 
-A localização não é rastreamento em tempo real: só é atualizada quando alguém escaneia a coleira.
+---
 
-## Funcionalidades (MVP)
-
-- [ ] Página pública do animal (foto, nome, espécie, vacinas, contato)
-- [ ] Registro de avistamento por geolocalização do navegador
-- [ ] Login de cuidadores
-- [ ] Cadastro e edição de animais e vacinas
-- [ ] Mapa com histórico de avistamentos (somente logado)
-- [ ] Regras de visibilidade (dados públicos x restritos)
-
-## Tecnologias
-
-| Camada | Ferramenta |
-|---|---|
-| Backend | Python + Flask |
-| Templates | Jinja2 + HTML |
-| Banco de dados | SQLite + SQLAlchemy |
-| Autenticação | Flask-Login |
-| Mapa | Leaflet + OpenStreetMap |
-| Hardware | Tags NFC |
-
-## Estrutura do projeto
+## ⚙️ Como Funciona
 
 ```
+[ Coleira NFC ] ──(aproximação)──> [ Navegador do Celular ]
+                                            │
+                                            ├──> GET /a/<tag> (Perfil + Saúde)
+                                            │
+                                            └──> POST /avistamento/<tag> ──> [ Banco SQLite ]
+                                                 (Latitude + Longitude)      (Histórico protegido)
+```
+
+1. **Identificação Única:** Cada animal possui uma `tag` segura e não sequencial gravada na tag NFC física da coleira.
+2. **Leitura Sem Aplicativo:** Qualquer pessoa com celular com NFC habilitado só precisa aproximar o aparelho da coleira para abrir a página web correspondente (`/a/<tag>`). Não é necessário instalar nenhum aplicativo.
+3. **Perfil de Saúde:** A página exibe a foto do animal, espécie, descrição, histórico de vacinas e dados de contato dos cuidadores/ONG responsável.
+4. **Avistamento Colaborativo:** O navegador solicita permissão de geolocalização. Se o usuário autorizar, apenas as coordenadas geográficas e o horário são enviados ao backend.
+
+> 📍 **Importante:** A localização não é rastreamento contínuo em tempo real; trata-se de um registro de **último avistamento**, atualizado a cada leitura voluntária da coleira.
+
+---
+
+## 🐶 Animais Pré-Cadastrados na Demonstração
+
+Para facilitar apresentações e testes após clonar o repositório, o banco de dados é inicializado automaticamente com os animais de demonstração:
+
+| Animal | Tag NFC | Descrição | Rota Pública de Demonstração |
+|---|---|---|---|
+| **Almofadinhas** 🐕 | `almofadinhas` | Cão da integrante Luísa Böhm (com 6 fotos) | `http://localhost:5000/a/almofadinhas` |
+| **Caramelo** 🐕 | `QI3u1Kd84hk` | Mascote comunitário do campus da UFPel | `http://localhost:5000/a/QI3u1Kd84hk` |
+| **Orelha** 🕊️ | `tsLaXibfAwM` | *Easter egg* / Homenagem comunitária | `http://localhost:5000/a/tsLaXibfAwM` |
+
+*Acessando a raiz (`http://localhost:5000/`), o sistema exibe o menu com as coleiras disponíveis para simular a aproximação NFC.*
+
+---
+
+## 🛡️ Privacidade por Design
+
+- **Consentimento Obrigatório:** A localização só é obtida caso o usuário permita explicitamente no navegador. Caso a permissão seja negada, a página continua funcionando normalmente.
+- **Anonimato de quem escaneia:** O sistema **nunca** armazena endereço IP, User-Agent, cookies ou qualquer dado de telemetria de quem realizou a aproximação.
+- **Proteção da Localização:** A página pública **nunca exibe coordenadas geográficas**, apenas o horário do último avistamento formatado no fuso horário local (`America/Sao_Paulo`). As coordenadas ficam restritas ao banco de dados e aos cuidadores.
+- **Tags Não Sequenciais:** As URLs utilizam códigos aleatórios gerados pelo módulo `secrets`, impedindo varredura de identificadores (enumeração).
+- **Chaves Estrangeiras Desacopladas:** Os avistamentos e vacinas referenciam o ID interno do animal; se uma tag física for danificada ou substituída, o histórico de saúde e avistamentos é preservado.
+
+---
+
+## 🖼️ Múltiplas Fotos na Galeria
+
+O GuaipeCare suporta múltiplas imagens por animal sem dependência de bibliotecas externas.
+- No campo `foto_url`, informe URLs separadas por vírgula ou quebra de linha (suporta caminhos estáticos locais como `/static/img/foto.jpg` e links externos `https://...`).
+- Em telas mobile, as fotos são organizadas automaticamente em uma galeria deslizante com *scroll-snap* nativo.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+| Camada | Tecnologia | Descrição |
+|---|---|---|
+| **Backend** | Python 3.10+ & Flask 3 | API REST leve e renderização server-side |
+| **Banco de Dados** | SQLite + Flask-SQLAlchemy | Armazenamento local relacional |
+| **Interface** | HTML5 + Jinja2 + CSS puro | Layout *mobile-first*, limpo e responsivo |
+| **Geolocalização** | JavaScript puro (Vanilla) | `navigator.geolocation` com envio assíncrono via `fetch` |
+| **Hardware** | Tags NFC (NTAG213 / NTAG215) | Tags impermeáveis presas à coleira |
+
+---
+
+## 📁 Estrutura do Projeto
+
+```text
 guaipecare/
 ├── app/
-│   ├── __init__.py
-│   ├── models.py
-│   ├── routes_public.py
-│   ├── routes_admin.py
+│   ├── __init__.py           # Application Factory e inicialização do banco
+│   ├── models.py             # Modelos SQLAlchemy (Animal e Avistamento)
+│   ├── routes_public.py      # Rotas públicas (/a/<tag>, POST /avistamento e menu /)
+│   ├── routes_admin.py       # Módulo reservado para área administrativa futura
 │   ├── templates/
-│   │   ├── base.html
-│   │   ├── animal.html
-│   │   └── admin/
+│   │   ├── base.html         # Template base responsivo
+│   │   ├── animal.html       # Perfil público do animal e aviso de privacidade
+│   │   └── admin/            # Diretório reservado para templates administrativos
 │   └── static/
-│       ├── css/style.css
-│       ├── js/geolocalizacao.js
-│       └── uploads/
+│       ├── css/style.css     # Estilos mobile-first sem frameworks
+│       ├── js/geolocalizacao.js # Script nativo de geolocalização e envio
+│       └── img/              # Imagens locais (ex: cao-orelha-3.jpg)
 ├── docs/
-│   └── canvas_guaipecare.pdf
-├── config.py
-├── requirements.txt
-├── run.py
-├── README.md
-└── .gitignore
+│   └── canvas_guaipecare.pdf # Business Model Canvas do projeto
+├── config.py                 # Configurações do Flask e SQLite
+├── requirements.txt          # Dependências do projeto (gerado via pip freeze)
+├── run.py                    # Ponto de entrada da aplicação
+├── seed.py                   # Script para sincronizar animais de teste e tags fixas
+├── ver_avistamentos.py       # Utilitário CLI para listar avistamentos com link Google Maps
+├── README.md                 # Documentação completa
+└── .gitignore                # Arquivos ignorados pelo Git
 ```
 
-## Como executar
+---
 
+## 🚀 Como Executar Localmente
+
+### 1. Clonar o repositório
 ```bash
-# criar e ativar o ambiente virtual
+git clone https://github.com/SEU_USUARIO/guaipeCare.git
+cd guaipeCare
+```
+
+### 2. Criar e ativar o ambiente virtual
+```bash
+# No Linux / macOS:
+python3 -m venv .venv
+source .venv/bin/activate
+
+# No Windows:
 python -m venv .venv
-.venv\Scripts\activate           # Linux/macOS: source .venv/bin/activate
+.venv\Scripts\activate
+```
 
-# instalar as dependências
+### 3. Instalar as dependências
+```bash
 pip install -r requirements.txt
+```
 
-# iniciar o servidor de desenvolvimento
+### 4. Executar a aplicação
+```bash
+flask --app run run --debug
+# ou:
 python run.py
 ```
 
-Acesse `http://localhost:5000`.
+O servidor iniciará em `http://127.0.0.1:5000`.  
+*(Na primeira inicialização, os animais de teste e avistamentos iniciais são criados automaticamente caso o banco ainda não exista).*
 
-> A geolocalização do navegador só funciona em `localhost` ou em **HTTPS**. Para testar com o celular e a tag NFC, use um túnel HTTPS (cloudflared, ngrok) ou o encaminhamento de porta do GitHub Codespaces.
+---
 
-## Privacidade
+## 📋 Comandos e Scripts Úteis
 
-- A localização só é coletada com permissão explícita do navegador.
-- Nenhuma informação que identifique quem escaneou é armazenada.
-- O histórico detalhado de localização é visível apenas para cuidadores autenticados.
-- IDs públicos dos animais são aleatórios (UUID), nunca sequenciais.
+- **Popular ou restaurar animais de teste:**
+  ```bash
+  python seed.py
+  ```
+  Restaura as tags padrão (`QI3u1Kd84hk` e `tsLaXibfAwM`), fotos e dados de contato.
 
-## Riscos conhecidos
+- **Visualizar o histórico de avistamentos:**
+  ```bash
+  python ver_avistamentos.py
+  ```
+  Exibe uma tabela no terminal com data local (`America/Sao_Paulo`), nome do animal, coordenadas e link direto para o Google Maps.
 
-- Baixa adesão dos cuidadores na atualização dos perfis
-- Coleira danificada ou ingerida (usar modelo com fecho de segurança)
-- Compatibilidade NFC em aparelhos mais antigos (previsto QR code como alternativa)
-- Exposição indevida de localização do animal
+---
 
-## Equipe
+## 📱 Como Gravar na Tag NFC
 
-- Lucas Dias
-- Lúcio Vagner
-- Luísa Böhm
+1. Instale no celular um aplicativo gravador de NFC (ex: **NFC Tools**, disponível gratuitamente para Android e iOS).
+2. Conecte o app local à internet via túnel HTTPS (ex: `ngrok http 5000` ou `cloudflared`) ou use o IP local da sua rede Wi-Fi.
+3. No app NFC:
+   - Selecione **Escrever** -> **Adicionar um registro** -> **URL / URI**.
+   - Insira a URL do animal (ex: `https://meu-dominio.com/a/tsLaXibfAwM`).
+   - Aproxime a tag NFC da coleira da traseira do smartphone para gravar.
+4. Ao aproximar qualquer smartphone da coleira, a página do animal abrirá imediatamente.
 
-## Licença
+> 💡 **Nota de Desenvolvimento:** A API de Geolocalização dos navegadores requer contexto seguro (`https://`) ou `localhost` para solicitar a permissão do GPS.
 
-A definir.
+---
+
+## 🗺️ Status de Implementação e Trabalhos Futuros
+
+- [x] Página pública responsiva do animal (nome, espécie, vacinas, contato, galeria)
+- [x] Rota de coleta de geolocalização com consentimento e validação estrita
+- [x] Suporte a múltiplas fotos na galeria (CSS nativo)
+- [x] Persistência relacional em SQLite com tratamento de tags seguras
+- [x] Dados de demonstração pré-configurados e persistentes
+- [x] Utilitário CLI para acompanhamento de avistamentos
+- [ ] Painel administrativo para cadastro e edição direta pelos cuidadores *(trabalho futuro)*
+- [ ] Sistema de login e autenticação com permissões restritas *(trabalho futuro)*
+- [ ] Mapa interativo com histórico de trajetos do animal (Leaflet + OpenStreetMap) *(trabalho futuro)*
+- [ ] Fallback com QR Code impresso na própria coleira para aparelhos sem leitor NFC *(trabalho futuro)*
+
+---
+
+## 👥 Equipe do Projeto
+
+- **Lucas Dias**
+- **Lúcio Vagner**
+- **Luísa Böhm**
+
+*Universidade Federal de Pelotas — UFPEL*

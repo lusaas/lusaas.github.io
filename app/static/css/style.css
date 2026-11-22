@@ -1,0 +1,259 @@
+/* ==========================================================================
+   GuaipeCare — Estilo Retrô & Pet Friendly
+   Simples, aconchegante e mobile-first
+   ========================================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #faf7f2;
+    background-image: radial-gradient(#e8dfd1 0.75px, transparent 0.75px);
+    background-size: 16px 16px;
+    color: #3b2d24;
+    line-height: 1.55;
+    padding: 0 1rem 2rem 1rem;
+    min-height: 100vh;
+}
+
+/* --- Cabeçalho do Topo --- */
+.topo-site {
+    max-width: 32rem;
+    margin: 0 auto;
+    padding: 1.25rem 0.5rem 1rem 0.5rem;
+}
+
+.container-topo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.icone-marca {
+    font-size: 1.75rem;
+    line-height: 1;
+    filter: drop-shadow(1px 1px 0px #d8ccb8);
+}
+
+.texto-marca {
+    display: flex;
+    flex-direction: column;
+}
+
+.nome-marca {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: bold;
+    font-size: 1.35rem;
+    color: #4a3427;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.subtitulo-marca {
+    font-size: 0.75rem;
+    color: #8c7362;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+}
+
+/* --- Container e Cartão Principal --- */
+.container {
+    max-width: 32rem;
+    margin: 0 auto;
+}
+
+.cartao {
+    background: #ffffff;
+    border: 2px solid #e5dac9;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 4px 5px 0px #ded0bd;
+    position: relative;
+}
+
+/* --- Fotos & Galeria Retrô (Estilo Fotografia) --- */
+.foto-container {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.galeria-fotos {
+    display: flex;
+    gap: 0.85rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0.25rem 0.25rem 0.75rem 0.25rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+.galeria-fotos .foto-item {
+    flex: 0 0 88%;
+    scroll-snap-align: center;
+}
+
+.foto-item {
+    background: #fff;
+    padding: 5px;
+    border: 1.5px solid #e8dfd1;
+    border-radius: 12px;
+    box-shadow: 2px 3px 6px rgba(74, 52, 39, 0.08);
+}
+
+.foto-animal {
+    max-width: 100%;
+    width: 100%;
+    height: 19rem;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+}
+
+.indicador-fotos {
+    font-size: 0.8rem;
+    color: #8c7362;
+    text-align: center;
+    margin-top: -0.25rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+/* --- Cabeçalho do Animal --- */
+.cabecalho-animal {
+    margin-bottom: 1rem;
+}
+
+.titulo-linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+}
+
+h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.85rem;
+    color: #2e1d14;
+    letter-spacing: -0.02em;
+}
+
+.badge-especie {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #593e2e;
+    background-color: #f7eedf;
+    border: 1px solid #e2d1bb;
+    padding: 0.2rem 0.65rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.tag-nfc-selo {
+    font-size: 0.8rem;
+    color: #8c7362;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.tag-nfc-selo code {
+    background-color: #f6efe4;
+    border: 1px solid #e5d8c6;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.82rem;
+    color: #4a3427;
+    font-weight: bold;
+}
+
+/* --- Seções do Perfil --- */
+.secao {
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1.5px dashed #ebdcc8;
+}
+
+h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.12rem;
+    color: #4a3427;
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.descricao, .texto-vacinas, .contato {
+    color: #4f3f35;
+    font-size: 0.95rem;
+    white-space: pre-line;
+    line-height: 1.6;
+}
+
+/* --- Destaque do Avistamento --- */
+.caixa-destaque-avistamento {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: #fcf9f2;
+    border: 1.5px solid #ede3d3;
+    padding: 0.65rem 0.9rem;
+    border-radius: 10px;
+}
+
+.icone-relogio {
+    font-size: 1.2rem;
+}
+
+.horario-avistamento {
+    color: #3b2d24;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* --- Aviso de Privacidade Retrô --- */
+.aviso-privacidade {
+    background-color: #fdfaf5;
+    border: 1px solid #ece2d2;
+    border-radius: 8px;
+    padding: 0.85rem;
+    margin-top: 1.25rem;
+}
+
+.aviso-privacidade p {
+    font-size: 0.8rem;
+    color: #7d6b5e;
+    line-height: 1.5;
+}
+
+/* --- Status da Localização --- */
+#status-localizacao {
+    margin-top: 0.85rem;
+    font-size: 0.88rem;
+    text-align: center;
+    color: #634b3d;
+    min-height: 1.3rem;
+    font-weight: 500;
+}
+
+/* --- Rodapé do Site --- */
+.rodape-site {
+    max-width: 32rem;
+    margin: 1.25rem auto 0 auto;
+    text-align: center;
+}
+
+.rodape-site p {
+    font-size: 0.8rem;
+    color: #9c8473;
+    font-style: italic;
+}

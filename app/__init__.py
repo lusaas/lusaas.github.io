@@ -1,22 +1,32 @@
 from flask import Flask
-from config import Config
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 def create_app():
-    """Application Factory: cria e configura o app Flask.
-
-    Usar uma função (em vez de criar o app no nível do módulo) evita
-    importações circulares e facilita testes no futuro.
-    """
+    
     app = Flask(__name__)
 
-    # Carrega as configurações definidas em config.py
+
+    from config import Config
     app.config.from_object(Config)
 
-    # Importa e registra o blueprint das rotas públicas.
-    # A importação é feita aqui dentro para evitar import circular
-    # (os blueprints importam 'app', que importaria 'blueprints' no topo).
+    
+    db.init_app(app)
+
+    
+    from app import models  # noqa: F401
     from app.routes_public import public
     app.register_blueprint(public)
+
+    # Criar as tabelas no banco de dados e dados da demo caso vazio
+    with app.app_context():
+        db.create_all()
+
+        from app.models import Animal
+        if Animal.query.first() is None:
+            from seed import cadastrar_animais
+            cadastrar_animais(app)
 
     return app

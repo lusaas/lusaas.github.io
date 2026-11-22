@@ -1,5 +1,13 @@
 # GuaipeCare 🐾
 
+## Abrir diretamente no navegador
+
+Abra o arquivo `index.html` na raiz do projeto para acessar a demonstração em HTML e CSS, sem instalar Python ou iniciar um servidor. Os perfis usam os dados de demonstração de `seed.py` e o mesmo arquivo de estilos da aplicação original. As fotos externas do Caramelo precisam de conexão com a internet.
+
+Esta versão estática não consulta o banco de dados nem solicita ou registra localizações. Para usar avistamentos compartilhados, é necessário executar a aplicação Flask descrita abaixo. As URLs estáticas também não substituem automaticamente os endereços NFC `/a/<tag>` da aplicação Flask; uma tag precisa apontar para o endereço público correspondente da versão hospedada.
+
+Para atualizar os arquivos HTML após alterar os dados de demonstração em `seed.py`, execute `python gerar_html.py`. O gerador usa apenas a biblioteca padrão do Python.
+
 > **Coleira inteligente de baixo custo com tag NFC para cães e gatos comunitários.**  
 > Ao aproximar o celular da coleira, uma página web é aberta com o perfil completo do animal (saúde, vacinas, cuidadores) e, mediante autorização voluntária de quem escaneou, registra o último local de avistamento.
 
